@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StikerMu — Order Stiker Custom</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --pink:#E8386D; --pink-lt:#FFF0F5; --pink-md:#FFC2D4; --pink-dk:#B5204A;
+  --ink:#0F0E11; --ink2:#3D3A45; --ink3:#7C7889;
+  --surface:#FFFFFF; --bg:#F7F4F9; --border:#EAE6F0;
+  --success:#18A46B; --warn:#E07B2A;
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-xl:32px;
+  --sh-sm:0 2px 8px rgba(15,14,17,.06);
+  --sh-md:0 8px 32px rgba(15,14,17,.10);
+  --sh-lg:0 20px 60px rgba(15,14,17,.13);
+}
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; }
+
+/* HERO */
+.hero { background:var(--ink); color:#fff; padding:56px 24px 48px; text-align:center; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 70% 80% at 50% 110%,rgba(232,56,109,.35) 0%,transparent 70%); pointer-events:none; }
+.hero-eyebrow { display:inline-flex; align-items:center; gap:6px; background:rgba(232,56,109,.18); border:1px solid rgba(232,56,109,.35); color:#FFB3C8; font-size:11px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; padding:5px 14px; border-radius:99px; margin-bottom:20px; }
+.hero-eyebrow span { width:6px; height:6px; background:var(--pink); border-radius:50%; display:inline-block; }
+.hero h1 { font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,5vw,3.4rem); font-weight:700; line-height:1.08; letter-spacing:-.02em; margin-bottom:12px; }
+.hero h1 em { color:var(--pink); font-style:normal; }
+.hero p { font-size:15px; color:rgba(255,255,255,.5); font-weight:300; }
+
+/* LAYOUT */
+.main { max-width:1100px; margin:0 auto; padding:40px 20px 80px; display:grid; grid-template-columns:1fr 380px; gap:28px; align-items:start; }
+@media(max-width:860px){ .main{grid-template-columns:1fr;} .summary-col{order:-1;} }
+
+/* CARDS */
+.card { background:var(--surface); border-radius:var(--r-lg); border:1px solid var(--border); box-shadow:var(--sh-sm); padding:28px; }
+.card+.card { margin-top:16px; }
+
+/* STEP LABEL */
+.step-label { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.step-num { width:26px; height:26px; background:var(--ink); color:#fff; font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.step-title { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink2); }
+
+/* INFO BAHAN */
+.info-card { background:var(--pink-lt); border:1px solid var(--pink-md); border-radius:var(--r-md); padding:16px 20px; display:flex; align-items:flex-start; gap:12px; margin-bottom:20px; transition:all .3s ease; }
+.info-icon { width:36px; height:36px; background:var(--pink); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; font-size:14px; }
+.info-bahan-name { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:var(--pink-dk); text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px; }
+.info-bahan-desc { font-size:13px; color:#8B3055; line-height:1.5; font-style:italic; }
+
+/* MATERIAL PILLS */
+.material-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+@media(max-width:500px){ .material-grid{grid-template-columns:repeat(2,1fr);} }
+.material-pill { position:relative; cursor:pointer; }
+.material-pill input { position:absolute; opacity:0; width:0; height:0; }
+.material-pill-inner { border:1.5px solid var(--border); border-radius:var(--r-md); padding:14px 10px 12px; text-align:center; transition:border-color .18s,background .18s,box-shadow .18s; background:var(--surface); }
+.material-pill input:checked+.material-pill-inner { border-color:var(--pink); background:var(--pink-lt); box-shadow:0 0 0 3px rgba(232,56,109,.10); }
+.material-pill-icon { width:36px; height:36px; border-radius:10px; background:var(--bg); display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-size:16px; transition:background .18s; }
+.material-pill input:checked+.material-pill-inner .material-pill-icon { background:rgba(232,56,109,.15); }
+.material-pill-name { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; color:var(--ink2); letter-spacing:.02em; }
+.material-pill input:checked+.material-pill-inner .material-pill-name { color:var(--pink-dk); }
+.material-pill-check { position:absolute; top:8px; right:8px; width:16px; height:16px; background:var(--pink); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:9px; opacity:0; transform:scale(.6); transition:opacity .18s,transform .18s; }
+.material-pill input:checked~.material-pill-check { opacity:1; transform:scale(1); }
+
+/* FORM ROW */
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:500px){ .form-row{grid-template-columns:1fr;} }
+.field-label { font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); margin-bottom:8px; display:block; }
+.sel-wrap { position:relative; }
+.sel-wrap select, .field-input { width:100%; padding:13px 16px; border:1.5px solid var(--border); border-radius:var(--r-sm); background:var(--bg); font-family:'Inter',sans-serif; font-size:14px; font-weight:500; color:var(--ink); appearance:none; outline:none; transition:border-color .18s,box-shadow .18s; }
+.sel-wrap select:focus, .field-input:focus { border-color:var(--pink); box-shadow:0 0 0 3px rgba(232,56,109,.10); background:#fff; }
+.sel-arrow { position:absolute; right:14px; top:50%; transform:translateY(-50%); pointer-events:none; color:var(--ink3); font-size:11px; }
+
+/* CUSTOM PANEL */
+#custom-panel { overflow:hidden; max-height:0; opacity:0; transition:max-height .38s ease,opacity .28s ease; margin-top:0; }
+#custom-panel.open { max-height:220px; opacity:1; margin-top:12px; }
+.custom-panel-inner { background:#FFF8FB; border:1.5px solid var(--pink-md); border-radius:var(--r-sm); padding:16px; }
+.custom-panel-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.custom-tag { background:var(--pink); color:#fff; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:3px 8px; border-radius:6px; }
+.custom-hint { font-size:12px; color:#9B4060; }
+.custom-inputs { display:flex; align-items:flex-end; gap:10px; }
+.custom-inputs .ci { flex:1; }
+.custom-inputs .ci label { font-size:11px; color:var(--ink3); font-weight:500; margin-bottom:5px; display:block; }
+.custom-inputs .ci input { width:100%; padding:11px 12px; border:1.5px solid var(--pink-md); border-radius:var(--r-sm); background:#fff; font-family:'Inter',sans-serif; font-size:15px; font-weight:600; color:var(--ink); text-align:center; outline:none; transition:border-color .18s; }
+.custom-inputs .ci input:focus { border-color:var(--pink); }
+.custom-x { font-size:18px; font-weight:700; color:var(--pink); padding-bottom:10px; flex-shrink:0; }
+.custom-calc { margin-top:10px; font-size:12px; color:#9B4060; display:none; align-items:center; gap:6px; flex-wrap:wrap; }
+.custom-calc.show { display:flex; }
+.custom-calc-chip { background:rgba(232,56,109,.10); color:var(--pink-dk); font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px; }
+
+/* QTY ERROR */
+.qty-error { font-size:12px; color:var(--warn); font-weight:500; margin-top:6px; display:none; }
+.qty-error.show { display:block; }
+
+/* WA BOX */
+.wa-box { background:#F0FAF5; border:1.5px dashed #9FE1CB; border-radius:var(--r-md); padding:24px; text-align:center; margin-top:4px; }
+.wa-icon-wrap { width:48px; height:48px; background:#fff; border-radius:14px; box-shadow:var(--sh-sm); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:22px; color:#25D366; }
+.wa-title { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:#0A5E3A; margin-bottom:5px; }
+.wa-desc { font-size:12.5px; color:#1D6B4A; line-height:1.55; }
+
+/* SUMMARY */
+.summary-card { background:var(--ink); color:#fff; border-radius:var(--r-xl); padding:32px 28px; box-shadow:var(--sh-lg); position:sticky; top:24px; border-top:3px solid var(--pink); }
+.summary-title { font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:24px; display:flex; align-items:center; gap:8px; }
+.summary-title::before { content:''; width:6px; height:6px; background:var(--pink); border-radius:50%; }
+.summary-rows { display:flex; flex-direction:column; }
+.summary-row { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+.summary-row:last-child { border-bottom:none; }
+.sr-label { font-size:12px; color:rgba(255,255,255,.4); }
+.sr-val { font-size:13px; font-weight:500; color:#fff; text-align:right; max-width:55%; }
+.sr-val.pink { color:var(--pink); }
+.sr-val.yellow { color:#F5C842; }
+.sr-val.blue { color:#72BFFF; }
+.sr-val.green { color:#5EE8A2; }
+.total-block { margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,.10); }
+.total-eyebrow { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--pink); font-weight:700; margin-bottom:4px; }
+.total-amount { font-family:'Space Grotesk',sans-serif; font-size:2.6rem; font-weight:700; color:#fff; letter-spacing:-.02em; line-height:1.1; }
+.btn-submit { width:100%; margin-top:24px; padding:17px; background:var(--pink); color:#fff; border:none; border-radius:var(--r-md); font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; letter-spacing:.04em; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:background .18s,transform .12s,box-shadow .18s; box-shadow:0 8px 24px rgba(232,56,109,.35); }
+.btn-submit:hover { background:var(--pink-dk); box-shadow:0 12px 32px rgba(232,56,109,.45); }
+.btn-submit:active { transform:scale(.98); }
+.btn-submit .wa-btn-icon { font-size:18px; }
+.contact-strip { margin-top:20px; padding:12px 16px; background:rgba(255,255,255,.05); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.08); text-align:center; font-size:11px; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+.contact-strip strong { color:rgba(255,255,255,.5); font-weight:500; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-eyebrow"><span></span> Cetak Profesional & Cepat</div>
+  <h1>Order Stiker<br><em>Custom</em> Kamu</h1>
+  <p>Pilih bahan, ukuran, jumlah — harga langsung keluar.</p>
+</header>
+
+<main class="main">
+
+  <div class="left-col">
+
+    <!-- BAHAN -->
+    <div class="card">
+      <div class="info-card" id="info-bahan">
+        <div class="info-icon"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="info-bahan-name" id="info-title">Vinyl C</div>
+          <div class="info-bahan-desc" id="info-text">Tahan air, tanpa laminasi, cocok untuk kemasan, cup</div>
+        </div>
+      </div>
+      <div class="step-label">
+        <div class="step-num">1</div>
+        <div class="step-title">Pilih Jenis Bahan</div>
+      </div>
+      <div class="material-grid">
+        <label class="material-pill">
+          <input type="radio" name="material" value="Sticker Vinyl C" checked onchange="updateUI()">
+          <div class="material-pill-inner">
+            <div class="material-pill-icon">🏷️</div>
+            <div class="material-pill-name">Vinyl C</div>
+          </div>
+          <div class="material-pill-check"><i class="fas fa-check"></i></div>
+        </label>
+        <label class="material-pill">
+          <input type="radio" name="material" value="Sticker Vinyl A" onchange="updateUI()">
+          <div class="material-pill-inner">
+            <div class="material-pill-icon">✨</div>
+            <div class="material-pill-name">Vinyl A</div>
+          </div>
+          <div class="material-pill-check"><i class="fas fa-check"></i></div>
+        </label>
+        <label class="material-pill">
+          <input type="radio" name="material" value="Sticker Clear" onchange="updateUI()">
+          <div class="material-pill-inner">
+            <div class="material-pill-icon">🔍</div>
+            <div class="material-pill-name">Clear</div>
+          </div>
+          <div class="material-pill-check"><i class="fas fa-check"></i></div>
+        </label>
+        <label class="material-pill">
+          <input type="radio" name="material" value="Sticker Hologram" onchange="updateUI()">
+          <div class="material-pill-inner">
+            <div class="material-pill-icon">💎</div>
+            <div class="material-pill-name">Hologram</div>
+          </div>
+          <div class="material-pill-check"><i class="fas fa-check"></i></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- UKURAN + QTY -->
+    <div class="card">
+      <div class="form-row">
+        <div>
+          <div class="step-label">
+            <div class="step-num">2</div>
+            <div class="step-title">Ukuran</div>
+          </div>
+          <div class="sel-wrap">
+            <select id="size" onchange="handleSizeChange()">
+              <option value="5x5">5 × 5 cm</option>
+              <option value="6x6">6 × 6 cm</option>
+              <option value="7x7">7 × 7 cm</option>
+              <option value="8x8">8 × 8 cm</option>
+              <option value="9x9">9 × 9 cm</option>
+              <option value="10x10">10 × 10 cm</option>
+              <option value="11x11">11 × 11 cm</option>
+              <option value="custom">✏️  Ukuran Custom...</option>
+            </select>
+            <span class="sel-arrow"><i class="fas fa-chevron-down"></i></span>
+          </div>
+          <div id="custom-panel">
+            <div class="custom-panel-inner">
+              <div class="custom-panel-header">
+                <span class="custom-tag">Custom</span>
+                <span class="custom-hint">Masukkan ukuran dalam cm</span>
+              </div>
+              <div class="custom-inputs">
+                <div class="ci">
+                  <label>Panjang</label>
+                  <input type="number" id="custom-p" min="1" max="200" placeholder="cth: 25" oninput="updateUI()">
+                </div>
+                <div class="custom-x">×</div>
+                <div class="ci">
+                  <label>Lebar</label>
+                  <input type="number" id="custom-l" min="1" max="200" placeholder="cth: 13" oninput="updateUI()">
+                </div>
+              </div>
+              <div class="custom-calc" id="custom-calc">
+                <span class="custom-calc-chip" id="custom-area-chip">0 cm²</span>
+                <span style="color:#9B4060;font-size:12px;">× <span id="custom-rate-info">Rp0</span>/cm² → min. <span id="custom-min-qty">-</span> pcs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="step-label">
+            <div class="step-num">3</div>
+            <div class="step-title">Jumlah</div>
+          </div>
+          <input type="number" id="qty" class="field-input" value="30" min="30" placeholder="Min. 30" oninput="updateUI()">
+          <div class="qty-error" id="qtyError">Minimal pemesanan adalah 30 pcs!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESAIN -->
+    <div class="card">
+      <div class="wa-box">
+        <div class="wa-icon-wrap"><i class="fab fa-whatsapp"></i></div>
+        <div class="wa-title">Kirim Desain via WhatsApp</div>
+        <div class="wa-desc">Klik <b>Submit Order</b>, lalu kirimkan file desain Anda<br>(JPG, PNG, PDF, atau AI) langsung ke WhatsApp Admin.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-col">
+    <div class="summary-card">
+      <div class="summary-title">Ringkasan Order</div>
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="sr-label">Jenis Bahan</span>
+          <span class="sr-val pink" id="res-material">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="sr-label">Ukuran</span>
+          <span class="sr-val" id="res-size">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="sr-label">Harga / Pcs</span>
+          <span class="sr-val yellow" id="res-unit">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="sr-label">Total Qty</span>
+          <span class="sr-val blue" id="res-qty">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="sr-label">File Desain</span>
+          <span class="sr-val green">Kirim di WA</span>
+        </div>
+      </div>
+      <div class="total-block">
+        <div class="total-eyebrow">Estimasi Total</div>
+        <div class="total-amount" id="res-total">Rp 0</div>
+      </div>
+      <button class="btn-submit" onclick="sendToWhatsApp()">
+        Submit Order <i class="fab fa-whatsapp wa-btn-icon"></i>
+      </button>
+      <div class="contact-strip">Admin: <strong>0851-8310-4822</strong></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const appData = {
+  "Sticker Vinyl C":  { desc:"Tahan air, tanpa laminasi, cocok untuk kemasan, cup",         prices:{"5x5":750,"6x6":1000,"7x7":1500,"8x8":2000,"9x9":2500,"10x10":3000,"11x11":3500}, ratePerCm2:30 },
+  "Sticker Vinyl A":  { desc:"Bahan premium, anti air, finishing tebal, glossy",             prices:{"5x5":1000,"6x6":1500,"7x7":2000,"8x8":2500,"9x9":3000,"10x10":3500,"11x11":4000}, ratePerCm2:40 },
+  "Sticker Clear":    { desc:"Stiker transparan / bening tembus pandang",                    prices:{"5x5":1000,"6x6":1500,"7x7":2000,"8x8":2500,"9x9":3000,"10x10":3500,"11x11":4000}, ratePerCm2:40 },
+  "Sticker Hologram": { desc:"Lebih premium dengan efek holographic berkilau",               prices:{"5x5":2000,"6x6":2500,"7x7":3000,"8x8":3500,"9x9":4000,"10x10":4500,"11x11":5000}, ratePerCm2:80 }
+};
+
+const MIN_ORDER = 150000;
+
+function fmt(n) { return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n); }
+function roundK(n) { return Math.ceil(n/1000)*1000; }
+function getMinQty(up) { return up>0 ? Math.ceil(MIN_ORDER/up) : 1; }
+
+function handleSizeChange() {
+  const size = document.getElementById('size').value;
+  const panel = document.getElementById('custom-panel');
+  if (size==='custom') {
+    panel.classList.add('open');
+  } else {
+    panel.classList.remove('open');
+    const qi = document.getElementById('qty');
+    qi.min=30; if(parseInt(qi.value)<30) qi.value=30;
+  }
+  updateUI();
+}
+
+function updateUI() {
+  const mel = document.querySelector('input[name="material"]:checked');
+  if (!mel) return;
+  const material = mel.value;
+  const size = document.getElementById('size').value;
+  const qi = document.getElementById('qty');
+  const qErr = document.getElementById('qtyError');
+  const data = appData[material];
+
+  document.getElementById('info-title').innerText = material.replace('Sticker ','');
+  document.getElementById('info-text').innerText  = data.desc;
+
+  let unitPrice=0, sizeLabel='', minQty=30;
+
+  if (size==='custom') {
+    const p = parseFloat(document.getElementById('custom-p').value)||0;
+    const l = parseFloat(document.getElementById('custom-l').value)||0;
+    const area = p*l;
+    const calc = document.getElementById('custom-calc');
+    if (p>0 && l>0) {
+      unitPrice = roundK(area*data.ratePerCm2);
+      minQty = getMinQty(unitPrice);
+      sizeLabel = `${p} × ${l} cm (Custom)`;
+      document.getElementById('custom-area-chip').innerText = area+' cm²';
+      document.getElementById('custom-rate-info').innerText = fmt(data.ratePerCm2);
+      document.getElementById('custom-min-qty').innerText = minQty+' pcs';
+      calc.classList.add('show');
+      qi.min=minQty;
+      if(parseInt(qi.value)<minQty) qi.value=minQty;
+    } else {
+      calc.classList.remove('show');
+      sizeLabel='Custom (belum diisi)';
+      qi.min=1;
+    }
+  } else {
+    unitPrice = data.prices[size];
+    sizeLabel = size.replace('x',' × ')+' cm';
+    qi.min=30; if(parseInt(qi.value)<30) qi.value=30;
+  }
+
+  const qty = parseInt(qi.value)||0;
+  if (qty<minQty) {
+    qErr.classList.add('show');
+    qErr.innerText = size==='custom'
+      ? `Minimal ${minQty} pcs untuk ukuran ini (min. order Rp150.000)`
+      : `Minimal pemesanan adalah ${minQty} pcs!`;
+  } else {
+    qErr.classList.remove('show');
+  }
+
+  const total = unitPrice*qty;
+  document.getElementById('res-material').innerText = material.replace('Sticker ','');
+  document.getElementById('res-size').innerText     = sizeLabel;
+  document.getElementById('res-unit').innerText     = unitPrice>0 ? fmt(unitPrice)+' /pcs' : '—';
+  document.getElementById('res-qty').innerText      = qty+' pcs';
+  document.getElementById('res-total').innerText    = fmt(total);
+}
+
+function sendToWhatsApp() {
+  const mel = document.querySelector('input[name="material"]:checked');
+  if (!mel) return;
+  const material = mel.value;
+  const size = document.getElementById('size').value;
+  const qty = parseInt(document.getElementById('qty').value)||0;
+
+  if (size==='custom') {
+    const p=parseFloat(document.getElementById('custom-p').value)||0;
+    const l=parseFloat(document.getElementById('custom-l').value)||0;
+    if(p<=0||l<=0){ alert("Mohon isi ukuran custom terlebih dahulu."); return; }
+    const minQty=getMinQty(roundK(p*l*appData[material].ratePerCm2));
+    if(qty<minQty){ alert(`Minimal ${minQty} pcs untuk ukuran ini (min. order Rp150.000).`); return; }
+  } else {
+    if(qty<30){ alert("Minimal pemesanan adalah 30 pcs."); return; }
+  }
+
+  const sizeLabel=document.getElementById('res-size').innerText;
+  const unit=document.getElementById('res-unit').innerText;
+  const total=document.getElementById('res-total').innerText;
+
+  const msg=`*ORDER STIKER CUSTOM*\n----------------------------\n📦 *Bahan* : ${material}\n📏 *Ukuran* : ${sizeLabel}\n💰 *Harga* : ${unit}\n🔢 *Jumlah* : ${qty} pcs\n----------------------------\n*TOTAL TAGIHAN : ${total}*\n\n_Halo Admin, saya sudah mengisi form order di website. Berikut detail pesanan saya. File desain menyusul._`;
+
+  window.open(`https://wa.me/6285183104822?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+window.onload=updateUI;
+</script>
+</body>
+</html>
